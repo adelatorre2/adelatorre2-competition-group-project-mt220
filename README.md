@@ -1,10 +1,31 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2821
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+# competition-group-project
 
-\f0\fs24 \cf0 # competition-group-project\
-\
-Group project for MT 220-01 Introduction to Probability and Statistics.}
+## 📊 MT220-01 Group Project: Rock Paper Scissors Competition
+
+This project explores probability and statistical patterns in a rock-paper-scissors tournament dataset collected during class.
+
+### 🧠 Team Members
+- Alejandro De La Torre
+- Isabel Nold
+- Brian Tobin
+- Matt Schwartz
+- Meredith Kendall
+
+### 📁 Project Structure
+
+- `data/`: Contains the dataset `competition_last.xlsx`.
+- `scripts/`: R scripts for data wrangling, analysis, and visualizations.
+- `report/`: LaTeX or RMarkdown report files for write-up.
+- `README.md`: This file!
+
+### 🚀 How to Run
+
+1. Open the project via `competition-group-project.Rproj`.
+2. Make sure the required packages (`readxl`, `dplyr`, etc.) are installed.
+3. Run scripts in the `scripts/` directory.
+
+### 🔄 Git Workflow Tips
+
+- Always `Pull` before starting work.
+- `Commit` with a clear message.
+- `Push` after you're done so others can see changes.

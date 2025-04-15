@@ -38,3 +38,12 @@
 # Usage:
 #   Source this script in RStudio or run sections interactively.
 
+library(readxl)
+library(dplyr)
+library(tidyr)
+
+# Load data
+df <- read_excel("data/competition_last.xlsx")
+
+# View the first few rows to confirm structure
+head(df)

@@ -91,7 +91,7 @@ empirical_proportions <- empirical_matrix / total_rounds
 print("Empirical Matrix (Proportions):")
 print(round(empirical_proportions, 3))
 
-# Optional: Save for the report
+# Save for the report in CSV tables
 write.csv(empirical_matrix, "report/empirical_matrix.csv")
 write.csv(empirical_proportions, "report/empirical_proportions.csv")
 write.csv(theoretical_probs, "report/theoretical_matrix.csv")

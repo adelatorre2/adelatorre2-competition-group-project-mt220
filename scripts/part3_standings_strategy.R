@@ -42,6 +42,7 @@
 library(readxl)
 library(dplyr)
 library(readr)
+library(tidyr)
 
 # Load data
 df <- read_excel("data/competition_last.xlsx")
@@ -211,7 +212,6 @@ write.csv(summary_df, "report/tables/part3_groupmate_strategy_summary.csv", row.
 # -----------------------------
 # Groupmate Interpretation Paragraphs
 # -----------------------------
-
 interpretation_text <- summary_df %>%
   mutate(
     Significant = ifelse(Significant == "Yes", "did", "did not"),
@@ -231,3 +231,101 @@ cat(paste(interpretation_text, collapse = "\n\n"))
 # Optional: Save to a markdown or text file
 writeLines(interpretation_text, "report/tables/part3_groupmate_interpretation.md")
 
+# -----------------------------
+# Compare Strategy: Top 5 vs Bottom 5
+# -----------------------------
+# Load game standings and hand usage
+game_standings <- read_csv("report/tables/part3_total_game_results.csv")
+overall_counts <- read_csv("report/tables/part2_overall_counts.csv")
+
+# Get top 5 and bottom 5 players by rank
+top5_players <- game_standings %>%
+  arrange(Rank) %>%
+  slice(1:5) %>%
+  pull(Player)
+
+bottom5_players <- game_standings %>%
+  arrange(desc(Rank)) %>%
+  slice(1:5) %>%
+  pull(Player)
+
+# Get overall counts for each group
+top5_counts <- overall_counts %>%
+  filter(Player %in% top5_players) %>%
+  select(R, P, S) %>%
+  summarise(across(everything(), sum))
+
+bottom5_counts <- overall_counts %>%
+  filter(Player %in% bottom5_players) %>%
+  select(R, P, S) %>%
+  summarise(across(everything(), sum))
+
+# Convert to proportions
+top5_prop <- round(top5_counts / sum(top5_counts), 3)
+bottom5_prop <- round(bottom5_counts / sum(bottom5_counts), 3)
+
+# Combine into long format for comparison
+strategy_compare <- rbind(
+  cbind(Group = "Top 5", as.data.frame(top5_prop)),
+  cbind(Group = "Bottom 5", as.data.frame(bottom5_prop))
+)
+
+strategy_compare_long <- strategy_compare %>%
+  pivot_longer(cols = c("R", "P", "S"), names_to = "Throw", values_to = "Proportion")
+
+# View in console
+print(strategy_compare_long)
+
+# Optional: Save as CSV
+write.csv(strategy_compare_long, "report/tables/part3_top5_vs_bottom5_strategy.csv", row.names = FALSE)
+
+# Optional: Bar plot
+library(ggplot2)
+
+ggplot(strategy_compare_long, aes(x = Throw, y = Proportion, fill = Group)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Strategy Comparison: Top 5 vs Bottom 5 Players",
+    y = "Proportion of Hands Played",
+    x = "Throw Type"
+  ) +
+  theme_minimal()
+
+# -----------------------------
+# First Two Rounds Outcomes: Top 5 vs Bottom 5
+# -----------------------------
+first2_outcomes <- read_csv("report/tables/part2_first2_outcomes.csv")
+
+# Filter and summarize for Top 5
+top5_first2 <- first2_outcomes %>%
+  filter(Player %in% top5_players) %>%
+  select(Win, Loss, Draw) %>%
+  summarise(across(everything(), sum)) %>%
+  mutate(Group = "Top 5")
+
+# Filter and summarize for Bottom 5
+bottom5_first2 <- first2_outcomes %>%
+  filter(Player %in% bottom5_players) %>%
+  select(Win, Loss, Draw) %>%
+  summarise(across(everything(), sum)) %>%
+  mutate(Group = "Bottom 5")
+
+# Combine and reshape for comparison
+first2_compare <- bind_rows(top5_first2, bottom5_first2) %>%
+  pivot_longer(cols = c(Win, Loss, Draw), names_to = "Outcome", values_to = "Count")
+
+# Print table
+print(first2_compare)
+
+# Optional: Save to CSV
+write.csv(first2_compare, "report/tables/part3_top5_vs_bottom5_first2_outcomes.csv", row.names = FALSE)
+
+# Optional: Plot
+ggplot(first2_compare, aes(x = Outcome, y = Count, fill = Group)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "First Two Rounds: Top 5 vs Bottom 5 Outcomes",
+    y = "Number of Outcomes",
+    x = "Match Result"
+  ) +
+  theme_minimal()

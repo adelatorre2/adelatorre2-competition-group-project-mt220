@@ -1,12 +1,12 @@
 # part3_standings_strategy.R
 #
-# Description: 
-#   Script for Part 3 of the MT220-01 Group Project. This script analyzes the final standings 
-#   of players in the Rock-Paper-Scissors dataset and compares strategic behavior across groups. 
-#   It includes:
-#     - Final player standings based on total wins and win-loss differential
-#     - Comparison of R/P/S usage proportions for top 5 vs. bottom 5 players
-#     - Comparison of first two rounds' outcomes (win/loss/draw) for top 5 vs. bottom 5 players
+# Description:
+#   Script for Part 3 of the MT220-01 Group Project. This script calculates and summarizes
+#   the final standings of a Rock-Paper-Scissors competition based on both game outcomes and
+#   individual match outcomes. The script includes:
+#     - Total match wins, losses, and ties for each player
+#     - Total game wins and losses for each player
+#     - Final standings sorted by game wins and match wins
 #
 # Author(s): 
 #   Alejandro De La Torre
@@ -15,83 +15,129 @@
 #   Matt Schwartz
 #   Meredith Kendall
 #
-# Course: 
+# Course:
 #   MT220-01 Introduction to Probability and Statistics (Spring 2025)
 #
-# Instructor: 
+# Instructor:
 #   Pep Mateu
 #
 # Last Updated: April 19, 2025
 #
-# Dependencies: 
-#   Requires the `dplyr` and `readr` packages, and assumes the Part 2 script 
-#   has been run successfully to generate intermediate CSVs.
+# Dependencies:
+#   Requires the `readxl`, `dplyr`, and `readr` packages.
 #
 # Inputs:
-#   - report/tables/part2_rest_outcomes.csv
-#   - report/tables/part2_overall_counts.csv
-#   - report/tables/part2_first2_outcomes.csv
+#   - data/competition_last.xlsx
 #
 # Outputs:
-#   - Final standings and group comparisons (saved in report/tables/)
-#     • part3_standings.csv
-#     • part3_top5_vs_bottom5_strategy.csv
-#     • part3_top5_vs_bottom5_outcomes.csv
+#   - Player-level match statistics: report/tables/part3_total_match_results.csv
+#   - Player-level game outcomes: report/tables/part3_total_game_results.csv
 #
 # Usage:
 #   Source this script in RStudio or run sections interactively.
 
-# Ensure output directory exists
+# -----------------------------
+# Setup
+# -----------------------------
+library(readxl)
+library(dplyr)
+library(readr)
+
+# Load data
+df <- read_excel("data/competition_last.xlsx")
+
+players <- unique(df$game)
+match_wins <- setNames(rep(0, length(players)), players)
+match_losses <- setNames(rep(0, length(players)), players)
+match_draws <- setNames(rep(0, length(players)), players)
+
+game_wins <- setNames(rep(0, length(players)), players)
+game_losses <- setNames(rep(0, length(players)), players)
+
+# Define result function
+get_result <- function(p1, p2) {
+  if (p1 == p2) return(c("Draw", "Draw"))
+  win_map <- list(R = "S", P = "R", S = "P")
+  if (win_map[[p1]] == p2) return(c("Win", "Loss"))
+  return(c("Loss", "Win"))
+}
+
+# Analyze games
+for (i in seq(1, nrow(df), by = 2)) {
+  p1 <- df[i, 1, drop = TRUE][[1]]
+  p2 <- df[i + 1, 1, drop = TRUE][[1]]
+  game <- df[c(i, i + 1), -1]
+  
+  p1_wins <- 0
+  p2_wins <- 0
+  
+  for (col_idx in seq_along(game)) {
+    move1 <- game[1, col_idx, drop = TRUE][[1]]
+    move2 <- game[2, col_idx, drop = TRUE][[1]]
+    if (is.na(move1) || is.na(move2)) next
+    
+    result <- get_result(move1, move2)
+    
+    if (result[1] == "Win") {
+      match_wins[p1] <- match_wins[p1] + 1
+      match_losses[p2] <- match_losses[p2] + 1
+      p1_wins <- p1_wins + 1
+    } else if (result[1] == "Loss") {
+      match_losses[p1] <- match_losses[p1] + 1
+      match_wins[p2] <- match_wins[p2] + 1
+      p2_wins <- p2_wins + 1
+    } else {
+      match_draws[p1] <- match_draws[p1] + 1
+      match_draws[p2] <- match_draws[p2] + 1
+    }
+    
+    if (p1_wins == 3 || p2_wins == 3) break
+  }
+  
+  if (p1_wins == 3) {
+    game_wins[p1] <- game_wins[p1] + 1
+    game_losses[p2] <- game_losses[p2] + 1
+  } else if (p2_wins == 3) {
+    game_wins[p2] <- game_wins[p2] + 1
+    game_losses[p1] <- game_losses[p1] + 1
+  }
+}
+
+# -----------------------------
+# Match Results
+# -----------------------------
+match_df <- data.frame(
+  Player = names(match_wins),
+  Match_Wins = match_wins,
+  Match_Losses = match_losses,
+  Match_Draws = match_draws
+) %>%
+  arrange(desc(Match_Wins), Match_Losses)
+
+# -----------------------------
+# Game Results with Corrected Ranking
+# -----------------------------
+game_df <- data.frame(
+  Player = names(game_wins),
+  Game_Wins = game_wins,
+  Game_Losses = game_losses
+) %>%
+  arrange(desc(Game_Wins), Game_Losses)
+
+# Compute proper rankings with ties
+rank_vals <- unique(game_df[, c("Game_Wins", "Game_Losses")]) %>%
+  arrange(desc(Game_Wins), Game_Losses)
+
+rank_vals$Rank <- seq_len(nrow(rank_vals))
+
+# Join ranks back to main df
+game_df <- left_join(game_df, rank_vals, by = c("Game_Wins", "Game_Losses"))
+
+# -----------------------------
+# Save CSVs
+# -----------------------------
 output_dir <- "report/tables/"
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
 
-# 1. Compute total wins and win-loss differential
-win_data <- rest_out_df
-win_data$Wins <- win_data$Win
-win_data$Losses <- win_data$Loss
-win_data$Draws <- win_data$Draw
-win_data$W_L_Diff <- win_data$Wins - win_data$Losses
-
-# 2. Merge with overall R/P/S counts
-merged_data <- merge(win_data, overall_df, by = "Player")
-
-# 3. Rank players
-standings <- merged_data %>%
-  arrange(desc(Wins), desc(W_L_Diff)) %>%
-  select(Player, Wins, Losses, Draws, W_L_Diff, R, P, S)
-
-# Save to CSV
-write.csv(standings, file.path(output_dir, "part3_standings.csv"), row.names = FALSE)
-
-# 4. Extract top 5 and bottom 5 players
-top5 <- standings$Player[1:5]
-bottom5 <- standings$Player[(nrow(standings)-4):nrow(standings)]
-
-# 5. Compare R/P/S strategy (as proportions)
-get_props <- function(df, players) {
-  subset <- df[df$Player %in% players, c("R", "P", "S")]
-  rownames(subset) <- df$Player[df$Player %in% players]
-  sweep(subset, 1, rowSums(subset), FUN = "/")
-}
-
-top5_strategy <- get_props(overall_df, top5)
-bottom5_strategy <- get_props(overall_df, bottom5)
-
-# Combine for export
-strategy_comparison <- rbind(
-  cbind(Group = "Top 5", Player = rownames(top5_strategy), round(top5_strategy, 2)),
-  cbind(Group = "Bottom 5", Player = rownames(bottom5_strategy), round(bottom5_strategy, 2))
-)
-
-write.csv(strategy_comparison, file.path(output_dir, "part3_top5_vs_bottom5_strategy.csv"), row.names = FALSE)
-
-# 6. Compare win/loss/draw in first two rounds
-first2_out_subset <- first2_out_df %>%
-  filter(Player %in% c(top5, bottom5)) %>%
-  mutate(Group = ifelse(Player %in% top5, "Top 5", "Bottom 5")) %>%
-  select(Group, Player, Win, Loss, Draw)
-
-write.csv(first2_out_subset, file.path(output_dir, "part3_top5_vs_bottom5_outcomes.csv"), row.names = FALSE)
-
-# Done!
-cat("✅ Part 3 completed. Standings, strategy, and outcomes saved to report/tables/\n")
+write.csv(match_df, file.path(output_dir, "part3_total_match_results.csv"), row.names = FALSE)
+write.csv(game_df, file.path(output_dir, "part3_total_game_results.csv"), row.names = FALSE)

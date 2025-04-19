@@ -142,3 +142,91 @@ if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
 write.csv(match_df, file.path(output_dir, "part3_total_match_results.csv"), row.names = FALSE)
 write.csv(game_df, file.path(output_dir, "part3_total_game_results.csv"), row.names = FALSE)
 
+# -----------------------------
+# Groupmate Strategy Summary Table
+# -----------------------------
+# Define your group; you can edit based on who you want
+group <- c("alejandro", "isabel", "brian", "matt", "meredith")
+
+# Load data
+game_df <- read_csv("report/tables/part2_strategy_shift_significance.csv")
+overall <- read_csv("report/tables/part2_overall_counts.csv")
+shifts <- read_csv("report/tables/part2_strategy_shift_significance.csv")
+first_outcomes <- read_csv("report/tables/part2_first2_outcomes.csv")
+rest_outcomes <- read_csv("report/tables/part2_rest_outcomes.csv")
+game_standings <- read_csv("report/tables/part3_total_game_results.csv")
+
+# Filter for group members
+game_stats <- game_standings %>%
+  filter(Player %in% group) %>%
+  select(Player, Game_Wins, Game_Losses, Rank)
+
+hand_pref <- overall %>%
+  filter(Player %in% group) %>%
+  rowwise() %>%
+  mutate(
+    Most_Used_Throw = {
+      throws <- c(R = R, P = P, S = S)
+      names(which.max(throws))
+    }
+  ) %>%
+  ungroup() %>%
+  select(Player, Most_Used_Throw)
+
+shift_sig <- shifts %>%
+  filter(Player %in% group) %>%
+  select(Player, Significant)
+
+first_summary <- first_outcomes %>%
+  filter(Player %in% group) %>%
+  rename(First_Win = Win, First_Loss = Loss, First_Draw = Draw)
+
+rest_summary <- rest_outcomes %>%
+  filter(Player %in% group) %>%
+  rename(Rest_Win = Win, Rest_Loss = Loss, Rest_Draw = Draw)
+
+# Join all together
+summary_df <- game_stats %>%
+  left_join(hand_pref, by = "Player") %>%
+  left_join(first_summary, by = "Player") %>%
+  left_join(rest_summary, by = "Player") %>%
+  left_join(shift_sig, by = "Player") %>%
+  select(
+    Player,
+    Game_Wins,
+    Game_Losses,
+    Rank,
+    Most_Used_Throw,
+    First_Win, First_Loss, First_Draw,
+    Rest_Win, Rest_Loss, Rest_Draw,
+    Significant
+  )
+
+# Print to console
+print(summary_df)
+
+# Optional: Save to CSV
+write.csv(summary_df, "report/tables/part3_groupmate_strategy_summary.csv", row.names = FALSE)
+
+# -----------------------------
+# Groupmate Interpretation Paragraphs
+# -----------------------------
+
+interpretation_text <- summary_df %>%
+  mutate(
+    Significant = ifelse(Significant == "Yes", "did", "did not"),
+    Paragraph = paste0(
+      "**", tools::toTitleCase(Player), "** ranked **#", Rank, "** with **", Game_Wins, 
+      "** wins and **", Game_Losses, "** losses. Their most-used hand was **", Most_Used_Throw, "**.\n",
+      "In early rounds, they had **", First_Win, "** wins, **", First_Loss, "** losses, and **", First_Draw, "** draws.\n",
+      "In later rounds, they had **", Rest_Win, "** wins, **", Rest_Loss, "** losses, and **", Rest_Draw, "** draws.\n",
+      "They **", Significant, " significantly shift strategy** between early and late rounds.\n"
+    )
+  ) %>%
+  pull(Paragraph)
+
+# Print to console
+cat(paste(interpretation_text, collapse = "\n\n"))
+
+# Optional: Save to a markdown or text file
+writeLines(interpretation_text, "report/tables/part3_groupmate_interpretation.md")

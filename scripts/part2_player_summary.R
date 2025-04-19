@@ -184,3 +184,42 @@ for (i in seq_len(nrow(first2))) {
 # Save test results
 print(results)
 write.csv(results, file.path(output_dir, "part2_strategy_shift_significance.csv"), row.names = FALSE)
+
+# -----------------------------
+# Visualization: Chi-Square Test Results
+# -----------------------------
+library(ggplot2)
+
+# Convert significance column to factor for color encoding
+results$Significant <- factor(results$Significant, levels = c("No", "Yes"))
+
+# Define the critical value for df = 2 at alpha = 0.05
+critical_value <- qchisq(0.95, df = 2)
+
+# Plot
+chisq_plot <- ggplot(results, aes(x = reorder(Player, -Chi_Square_Stat), 
+                                  y = Chi_Square_Stat, 
+                                  fill = Significant)) +
+  geom_col(color = "black", width = 0.7) +
+  geom_hline(yintercept = critical_value, linetype = "dashed", color = "red", linewidth = 0.7) +
+  scale_fill_manual(values = c("No" = "gray60", "Yes" = "forestgreen")) +
+  labs(
+    title = "Chi-Square Test Statistic per Player",
+    subtitle = "Strategy Shift Between Early and Later Rounds",
+    x = "Player",
+    y = "Chi-Square Statistic",
+    fill = "Significant Shift"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(face = "bold"),
+    plot.subtitle = element_text(margin = margin(b = 10))
+  )
+
+# Save figure
+ggsave(filename = "report/figures/strategy_shift_chisq.png", 
+       plot = chisq_plot, 
+       width = 12, height = 6, dpi = 300, bg = "white")

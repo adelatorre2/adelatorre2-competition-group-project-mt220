@@ -1,39 +1,49 @@
 # part3_standings_strategy.R
 #
-# Description:
-#   Script for Part 3 of the MT220-01 Group Project. This script calculates and summarizes
-#   the final standings of a Rock-Paper-Scissors competition based on both game outcomes and
-#   individual match outcomes. The script includes:
+## Description:
+#   Script for Part 3 of the MT220-01 Group Project. This script analyzes the final standings 
+#   of a Rock-Paper-Scissors tournament and explores player-level strategy. It includes:
 #     - Total match wins, losses, and ties for each player
-#     - Total game wins and losses for each player
-#     - Final standings sorted by game wins and match wins
+#     - Total game wins and losses, with final rankings
+#     - Summary statistics for groupmates (e.g., hand preferences, early vs late round results)
+#     - Strategy comparison between the top 5 and bottom 5 players
+#     - First two round outcomes between top 5 and bottom 5 players
+#     - Average number of matches per game
 #
-# Author(s): 
+## Author(s): 
 #   Alejandro De La Torre
 #   Isabel Nold
 #   Brian Tobin
 #   Matt Schwartz
 #   Meredith Kendall
 #
-# Course:
+## Course:
 #   MT220-01 Introduction to Probability and Statistics (Spring 2025)
 #
-# Instructor:
+## Instructor:
 #   Pep Mateu
 #
-# Last Updated: April 19, 2025
+## Last Updated: April 20, 2025
 #
-# Dependencies:
-#   Requires the `readxl`, `dplyr`, and `readr` packages.
+## Dependencies:
+#   Requires the `readxl`, `dplyr`, `readr`, `tidyr`, and `ggplot2` packages.
 #
-# Inputs:
+## Inputs:
 #   - data/competition_last.xlsx
+#   - report/tables/part2_overall_counts.csv
+#   - report/tables/part2_strategy_shift_significance.csv
+#   - report/tables/part2_first2_outcomes.csv
+#   - report/tables/part2_rest_outcomes.csv
 #
-# Outputs:
+## Outputs:
 #   - Player-level match statistics: report/tables/part3_total_match_results.csv
 #   - Player-level game outcomes: report/tables/part3_total_game_results.csv
+#   - Groupmate summary: report/tables/part3_groupmate_strategy_summary.csv
+#   - Strategy comparison: report/tables/part3_top5_vs_bottom5_strategy.csv
+#   - First two round outcome comparison: report/tables/part3_top5_vs_bottom5_first2_outcomes.csv
+#   - Markdown interpretations: report/tables/part3_groupmate_interpretation.md
 #
-# Usage:
+## Usage:
 #   Source this script in RStudio or run sections interactively.
 
 # -----------------------------

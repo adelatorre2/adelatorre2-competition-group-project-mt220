@@ -329,3 +329,42 @@ ggplot(first2_compare, aes(x = Outcome, y = Count, fill = Group)) +
     x = "Match Result"
   ) +
   theme_minimal()
+
+# -----------------------------
+# Average Number of Matches per Game
+# -----------------------------
+
+# Load game data if not already loaded
+df <- read_excel("data/competition_last.xlsx")
+
+# Count total number of match rounds used in each game
+match_lengths <- c()
+
+for (i in seq(1, nrow(df), by = 2)) {
+  p1 <- df[i, 1, drop = TRUE][[1]]
+  p2 <- df[i + 1, 1, drop = TRUE][[1]]
+  game <- df[c(i, i + 1), -1]
+  
+  p1_wins <- 0
+  p2_wins <- 0
+  
+  for (j in seq_along(game)) {
+    move1 <- game[1, j, drop = TRUE][[1]]
+    move2 <- game[2, j, drop = TRUE][[1]]
+    if (is.na(move1) || is.na(move2)) next
+    
+    result <- get_result(move1, move2)
+    
+    if (result[1] == "Win") p1_wins <- p1_wins + 1
+    else if (result[1] == "Loss") p2_wins <- p2_wins + 1
+    
+    if (p1_wins == 3 || p2_wins == 3) {
+      match_lengths <- c(match_lengths, j)
+      break
+    }
+  }
+}
+
+# Compute average number of matches per game
+avg_matches_per_game <- mean(match_lengths)
+cat("Average number of matches per game:", round(avg_matches_per_game, 2), "\n")

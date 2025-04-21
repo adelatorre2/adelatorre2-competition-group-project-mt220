@@ -1,6 +1,4 @@
-
-
- # -----------------------------
+# -----------------------------
  # Part 4: Independent Analysis
  # -----------------------------
  # Author: Alejandro De La Torre
@@ -21,18 +19,95 @@
  library(rpart)
  library(rpart.plot)
  library(tidyr)
+ library(readxl)
  
  # -----------------------------
  # 1. Decision Tree Modeling
  # -----------------------------
  # Objective: Predict player throw based on opponent’s previous throw and prior result
- # Data prep (example structure - replace with actual columns)
- # df_model <- data.frame(Opponent_Throw, Previous_Result, Round, Player_Throw)
- 
- # Example model (to be customized based on available columns)
- # fit <- rpart(Player_Throw ~ Opponent_Throw + Previous_Result + Round,
- #              data = df_model, method = "class")
- # rpart.plot(fit)
+
+ # Load match data
+ raw_df <- read_excel("data/competition_last.xlsx")
+
+ # Reformat data into tidy long format (cleaner and structurally consistent)
+ num_rounds <- ncol(raw_df) - 1
+ num_games <- nrow(raw_df) / 2
+
+long_df <- raw_df %>%
+  mutate(Game = rep(1:num_games, each = 2),
+         Player_ID = rep(1:2, times = num_games)) %>%
+  pivot_longer(cols = -c(Game, Player_ID), names_to = "Round", values_to = "Throw") %>%
+  mutate(Round = as.integer(Round)) %>%
+  filter(!is.na(Throw))
+
+ # Add Player_ID (1 for first row of each game pair, 2 for second)
+ long_df$Player_ID <- rep(rep(1:2, each = 1), length.out = nrow(long_df))
+
+# Rebuild game index
+num_rounds <- ncol(raw_df) - 1
+num_games <- nrow(raw_df) / 2
+total_throws_per_game <- 2 * num_rounds
+
+game_index <- rep(1:num_games, each = total_throws_per_game)
+
+# Adjust to ensure game_index matches number of rows in long_df
+if (length(game_index) > nrow(long_df)) {
+  game_index <- game_index[1:nrow(long_df)]
+} else if (length(game_index) < nrow(long_df)) {
+  game_index <- rep(game_index, length.out = nrow(long_df))
+}
+
+long_df$Game_ID <- game_index
+
+ # Separate throws into wide format
+ wide_df <- long_df %>%
+   pivot_wider(names_from = Player_ID, values_from = Throw, names_prefix = "Player_") %>%
+   rename(Player_Throw = Player_1, Opponent_Throw = Player_2) %>%
+   filter(!is.na(Player_Throw) & !is.na(Opponent_Throw))
+
+ # Derive previous result for player
+ wide_df <- wide_df %>%
+   mutate(
+     Player_Throw = as.character(Player_Throw),
+     Opponent_Throw = as.character(Opponent_Throw)
+   ) %>%
+   group_by(Game_ID) %>%
+   mutate(
+     Previous_Result = lag(case_when(
+       Player_Throw == Opponent_Throw ~ "Draw",
+       (Player_Throw == "R" & Opponent_Throw == "S") |
+       (Player_Throw == "P" & Opponent_Throw == "R") |
+       (Player_Throw == "S" & Opponent_Throw == "P") ~ "Win",
+       TRUE ~ "Loss"
+     ))
+   ) %>%
+   ungroup() %>%
+   filter(!is.na(Previous_Result))
+
+ # Build model
+ df_model <- wide_df %>%
+   select(Player_Throw, Opponent_Throw, Previous_Result)
+
+ fit <- rpart(Player_Throw ~ Opponent_Throw + Previous_Result,
+              data = df_model, method = "class")
+
+ # Plot decision tree
+ rpart.plot(fit)
+
+# Ensure output directory exists
+if (!dir.exists("report/figures")) {
+  dir.create("report/figures", recursive = TRUE)
+}
+
+# Save plot to PNG
+png_path <- "report/figures/decision_tree_plot.png"
+ggsave(filename = png_path, plot = rpart.plot(fit), width = 8, height = 6)
+
+# Message to user
+cat(paste("Decision tree plot saved to:", png_path, "\n"))
+
+ # Optionally save model or predictions
+ # saveRDS(fit, "report/models/decision_tree_model.rds")
  
  # -----------------------------
  # 2. Throw Transition Matrix (Markov Chain)

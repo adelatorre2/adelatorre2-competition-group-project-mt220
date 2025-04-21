@@ -6,6 +6,7 @@
 library(dplyr)
 library(ggplot2)
 library(readxl)
+library(writexl)
 
 # Load the raw match data
 raw_df <- read_excel("data/competition_last.xlsx")
@@ -47,3 +48,57 @@ ggplot(df_plot, aes(x = factor(Match_Length), y = Game_Count)) +
 ggsave(plot_path, width = 8, height = 6)
 
 cat(paste("Bar chart saved to:", plot_path, "\n"))
+
+# NOTE: we have crossed/nested panel data
+
+# -----------------------------
+# Reformat raw data into long format
+# -----------------------------
+
+# Load the original data again (to ensure independence from previous steps)
+raw_df <- read_excel("data/competition_last.xlsx")
+
+# Initialize long format data frame
+long_list <- list()
+
+match_id <- 1
+for (i in seq(1, nrow(raw_df), by = 2)) {
+  player1 <- raw_df[i, ]
+  player2 <- raw_df[i + 1, ]
+  game_id <- (i + 1) / 2
+
+  for (j in 2:ncol(raw_df)) {
+    throw1 <- as.character(player1[[j]])
+    throw2 <- as.character(player2[[j]])
+    if (!is.na(throw1) && !is.na(throw2)) {
+      long_list[[length(long_list) + 1]] <- data.frame(
+        Game_ID = game_id,
+        Match_ID = j - 1,
+        Player_ID = player1[[1]],
+        Throw = throw1,
+        Opponent_ID = player2[[1]],
+        Opponent_Throw = throw2,
+        stringsAsFactors = FALSE
+      )
+      long_list[[length(long_list) + 1]] <- data.frame(
+        Game_ID = game_id,
+        Match_ID = j - 1,
+        Player_ID = player2[[1]],
+        Throw = throw2,
+        Opponent_ID = player1[[1]],
+        Opponent_Throw = throw1,
+        stringsAsFactors = FALSE
+      )
+    }
+  }
+}
+
+long_df <- do.call(rbind, long_list)
+
+# Save to new Excel file
+if (!dir.exists("data")) {
+  dir.create("data")
+}
+
+writexl::write_xlsx(long_df, "data/competition_last_long.xlsx")
+cat("Reformatted long dataset saved to data/competition_last_long.xlsx\n")

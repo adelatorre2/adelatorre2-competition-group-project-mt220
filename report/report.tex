@@ -9,6 +9,10 @@
 \usepackage{hyperref}
 \usepackage{cite}
 \usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{makecell}
+\usepackage{amssymb}
+
 
 
 \title{\textbf{Group Project Report}\\
@@ -29,19 +33,31 @@ Instructor: Pep Mateu}
 \begin{document}
 
 \maketitle
+\vspace{0.5em}
+\begin{center}
+\href{https://github.com/adelatorre2/adelatorre2-competition-group-project-mt220}{\texttt{GitHub Repository: Competition Group Project}}
+\end{center}
+\vspace{0.5em}
+
+\vspace{0.5em}
+
+\newpage
 \tableofcontents
 \newpage
 
 \section*{Part 1: Theoretical vs. Empirical Probabilities}
+\addcontentsline{toc}{section}{Part 1: Theoretical vs. Empirical Probabilities}
 
 \subsection*{Objective}
-To compare the theoretical probabilities of each Rock-Paper-Scissors (RPS) combination to the actual game data from \texttt{competition\_final.xls}. Specifically, we examine the probability of each possible hand matchup (e.g., Rock vs Paper, Scissors vs Rock, etc.) under two scenarios:
+\addcontentsline{toc}{subsection}{Objective}
+To compare the theoretical probabilities of each Rock-Paper-Scissors (RPS) combination to the actual game data from \texttt{competition\_final.xls} \cite{mateu_competition_lastxlsx_2025}. Specifically, using methods found in \cite{montgomery_applied_2018}, we examine the probability of each possible hand matchup (e.g., Rock vs Paper, Scissors vs Rock, etc.) under two scenarios:
 \begin{itemize}
     \item \textbf{Theoretical:} Assuming uniformly random play.
     \item \textbf{Empirical:} Based on observed play in the dataset.
 \end{itemize}
 
 \subsection*{Theoretical Probabilities}
+\addcontentsline{toc}{subsection}{Theoretical Probabilities}
 Assuming each hand is equally likely,
 \[
 P(\text{Rock}) = P(\text{Paper}) = P(\text{Scissors}) = \frac{1}{3}
@@ -54,12 +70,15 @@ P(i \text{ vs } j) = \frac{1}{3} \cdot \frac{1}{3} = \frac{1}{9} \approx 0.111
 For a full view of the expected probabilities across all matchups, see Table~\ref{tab:theoretical_matrix} in the Appendix.
 
 \subsection*{Empirical Counts Matrix}
+\addcontentsline{toc}{subsection}{Empirical Counts Matrix}
 The actual number of times each pairing occurred in the dataset is displayed in Table~\ref{tab:empirical_counts} in the Appendix.
 
 \subsection*{Empirical Proportions Matrix}
+\addcontentsline{toc}{subsection}{Empirical Proportions Matrix}
 To better compare observed results with theoretical expectations, we normalized the empirical counts into proportions. These are shown in Table~\ref{tab:empirical_proportions} in the Appendix.
 
 \subsection*{Analysis and Comparison}
+\addcontentsline{toc}{subsection}{Analysis and Comparison}
 \begin{itemize}
     \item The theoretical matrix (Table~\ref{tab:theoretical_matrix}) is symmetric and uniform, reflecting the assumption of equally likely hand selection.
     \item The empirical data (Table~\ref{tab:empirical_counts} and Table~\ref{tab:empirical_proportions}) shows deviations from this uniformity, which is to be expected. Scissors, for instance, appears more frequently than expected in both play and matchups.
@@ -67,24 +86,30 @@ To better compare observed results with theoretical expectations, we normalized 
     \item Rock vs Rock (0.067) appears significantly less than expected, hinting at underuse of Rock.
 \end{itemize}
 
-\noindent \textbf{Conclusion:} The empirical play patterns deviate from random choice assumptions. This suggests either strategic adaptation, psychological preference, or game-learning behavior over time. On the subject of preference towards scissors, there exists a possibility that players anticipating the game googled: "best strategy in rock paper scissors" and got advice to randomize their hand, and since \href{https://www.fishersci.com/us/en/education-products/publications/headline-discoveries/2025/spring-summer/rock-paper-scissors-science.html#:~:text=In%20RPS%2C%20each%20option%20has,paper%2C%20and%2026%20percent%20scissors.}{rock is the most commonly played hand}, there must have been a perceived randomness in choosing to play scissors in any given match up. Alternatively, with the knowledge that rock is the most common hand and that we typically played during the last few minutes of class, players could have opted to use a \href{https://wrpsa.com/the-worst-rock-paper-scissors-strategies/}{scissors-dominant, double exclusion strategy} in an effort to lose quickly to leave the class as soon as possible. Further analysis in later parts will investigate changes across rounds and player strategies.
+The empirical play patterns deviate from random choice assumptions. This suggests either strategic adaptation, psychological preference, or game-learning behavior over time. On the subject of preference towards scissors, there exists a possibility that players anticipating the game googled: "best strategy in rock paper scissors" and got advice to randomize their hand, and since \href{https://www.fishersci.com/us/en/education-products/publications/headline-discoveries/2025/spring-summer/rock-paper-scissors-science.html#:~:text=In%20RPS%2C%20each%20option%20has,paper%2C%20and%2026%20percent%20scissors.}{rock is the most commonly played hand}, there must have been a perceived randomness in choosing to play scissors in any given match up \cite{northam_rock_2025}. Alternatively, with the knowledge that rock is the most common hand and that we typically played during the last few minutes of class, players could have opted to use a \href{https://wrpsa.com/the-worst-rock-paper-scissors-strategies/}{scissors-dominant, double exclusion strategy} in an effort to lose quickly to leave the class as soon as possible \cite{world_rock_paper_scissors_association_worst_2021}. Further analysis in later parts will investigate changes across rounds and player strategies.
 
 \newpage
 
 % Part 2
 \section*{Part 2: Player Behavior in Early vs. Later Rounds}
+\addcontentsline{toc}{section}{Part 2: Player Behavior in Early vs. Later Rounds}
+
 
 \subsection*{Overview}
+\addcontentsline{toc}{subsection}{Overview}
 In this section, we analyze player behavior in different segments of the competition, specifically comparing the first two rounds of each game to the rest of the rounds. This includes an examination of the frequency of each hand (Rock, Paper, Scissors) used and the outcomes (Win, Loss, Tie) for each player across these segments.
 
 \subsection*{Summary of All Hands Played}
-We begin by reporting the total number of times each player used Rock, Paper, or Scissors throughout the entire competition.
+\addcontentsline{toc}{subsection}{Summary of All Hands Played}
+With guidance from \cite{sawitzki_computational_nodate
+}, we begin by reporting the total number of times each player used Rock, Paper, or Scissors throughout the entire competition.
 
 \begin{itemize}
     \item See Table~\ref{tab:overall_counts} in the Appendix for the full breakdown of overall throw counts.
 \end{itemize}
 
 \subsection*{First Two Rounds Analysis}
+\addcontentsline{toc}{subsection}{First Two Rounds Analysis}
 Next, we focus on the first two rounds of each game and count:
 
 \begin{itemize}
@@ -93,6 +118,7 @@ Next, we focus on the first two rounds of each game and count:
 \end{itemize}
 
 \subsection*{Remaining Rounds Analysis}
+\addcontentsline{toc}{subsection}{Remaining Rounds Analysis}
 Then, we isolate all rounds \textbf{after} the first two in each game to determine:
 
 \begin{itemize}
@@ -101,6 +127,7 @@ Then, we isolate all rounds \textbf{after} the first two in each game to determi
 \end{itemize}
 
 \subsection*{Comparative Analysis and Discussion}
+\addcontentsline{toc}{subsection}{Comparative Analysis and Discussion}
 By contrasting the early-round data with later-round behavior, we can evaluate whether players adjusted their strategy as the game progressed. Some key questions we investigate include:
 
 \begin{itemize}
@@ -161,30 +188,129 @@ This visual makes it easy to quickly spot which players shifted strategies (i.e.
 
 % Part 3
 \section*{Part 3: Standings and Strategy Analysis}
+\addcontentsline{toc}{section}{Part 3: Standings and Strategy Analysis}
 
 \subsection*{Final Standings}
-% TODO: Insert standings table and relevant statistics
+\addcontentsline{toc}{subsection}{Final Standings}
 
-\subsection*{Interpretation}
-% TODO: Each group member explains their position and results
+To evaluate overall performance in the tournament, we used the number of game wins as the primary ranking criterion and resolved ties using the number of game losses as a tiebreaker. A game was defined as won once a player accumulated three round victories against an opponent.
 
-\subsection*{Top 5 vs. Bottom 5 Players}
-% TODO: Summarize and compare strategies and outcomes
+The top five players were: Ellie (16W, 6L), Isabel (15W, 8L), Matt (14W, 9L), Brian (13W, 10L), and Hayden (13W, 10L). The bottom five were: Lilly (4W, 17L), Devin (5W, 15L), Bruno (6W, 15L), Meredith (9W, 14L), and Molly (9W, 14L). The full tournament ranking is summarized in Table~\ref{tab:total_game_results}, and the individual match performance of each player (i.e., the total number of round-level wins, losses, and draws) is reported in Table~\ref{tab:total_match_results}.
+
+\subsection*{Interpretation of Groupmate Performance}
+\addcontentsline{toc}{subsection}{Interpretation of Groupmate Performance}
+
+To understand why our group members—Isabel, Matt, Brian, Alejandro, and Meredith—placed where they did, we analyzed their tournament results and hand selection behavior. Specifically, we examined their number of game wins and losses, most-used hand (Rock, Paper, or Scissors), and whether they significantly changed strategies between the first two rounds and the remainder of each game. These summary statistics are shown in Table~\ref{tab:groupmate_summary}.
+
+Among our groupmates, only Isabel demonstrated a statistically significant shift in strategy over time (based on a chi-squared test with $\alpha = 0.05$), while the others showed no such evidence of change. Notably, three of the five relied most heavily on Scissors, with Matt favoring Rock and Meredith favoring Paper. This suggests that although the group’s play was diverse in hand preference, it was relatively fixed in structure and not strongly adaptive mid-game.
+
+Isabel’s higher rank and significant strategic shift suggest that strategic flexibility may have helped her secure a top-tier placement. In contrast, others like Alejandro and Meredith may have been disadvantaged by consistent, potentially predictable hand distributions that opponents could exploit as games progressed.
+
+\subsection*{Top 5 vs. Bottom 5 Comparison}
+\addcontentsline{toc}{subsection}{Top 5 vs. Bottom 5 Comparison}
+
+To investigate performance patterns, we compared both hand usage and round-level outcomes between the top five and bottom five players. This allowed us to evaluate how specific strategic behaviors correlated with success in the tournament.
+
+As shown in Table~\ref{tab:top5_vs_bottom5_strategy}, the top five players relied most on Rock (38.9\%) and least on Paper (30.1\%), while the bottom five players showed the opposite pattern—using Paper most frequently (40.1\%) and Rock the least (26.8\%). This inverse relationship suggests that overuse of Paper may be detrimental to success, while a more balanced or Rock-favored approach might be advantageous in this competitive environment, which is self evident with the knowledge that the entire class, on average, favored the use of scissors. We can plot these differences in strategy between the top 5 and the bottom 5 below.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{figures/Strategy_Comparison_T5vB5.png}
+\caption{Hand Selection Proportions by Group: Top 5 vs Bottom 5 Players}
+\label{fig:strategy_comparison_T5vB5}
+\end{figure}
+
+This imbalance may have made the bottom five more predictable or less effective, especially if opponents adapted by countering with Scissors. On the other hand, the top five’s preference for Rock might have allowed them to win more encounters against players who overused Scissors or Paper. These contrasting patterns highlight how throw distribution is not just a matter of randomness but can reflect broader behavioral tendencies with measurable consequences in competitive outcomes.
+
+We also analyzed results from the first two rounds of each game. Early rounds are critical because they offer an opportunity to set the tone and momentum for the rest of the game. As shown in Table~\ref{tab:first2_outcomes_t5b5}, top players won 99 early rounds while losing only 62. In contrast, the bottom five players only managed 61 early-round wins and lost 100 rounds. Draw rates were equal across both groups (69). These results are depicted graphically in below.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{figures/first2rounds_T5vB5.png}
+\caption{Match Outcomes in First Two Rounds: Top 5 vs Bottom 5 Players}
+\label{fig:first2rounds_T5vB5}
+\end{figure}
+
+Figure~\ref{fig:first2rounds_T5vB5} compares the outcomes of the first two rounds in each game for the top five and bottom five players. The differences are stark: the top five players secured 99 wins while only losing 62 early rounds. Meanwhile, the bottom five managed just 61 wins and suffered 100 losses in those same initial rounds. Draws were evenly distributed at 69 for each group.
+
+This figure reinforces the importance of early momentum. Top players not only gained an edge in the opening stages but sustained this advantage through to final victory. In contrast, the bottom five players fell behind early and were unable to recover. This makes sense because the average number of matches per game across the entire tournament was \textbf{5.93}. These findings suggest that early-round performance may be a leading indicator of game outcomes, possibly due to psychological momentum, confidence, or the tactical advantage of playing from ahead. In other words, players who established early leads were more likely to convert those into full game wins. The bottom five players not only lost more early rounds but also showed overreliance on Paper—a possible liability if opponents adjusted with a Scissors-heavy strategy.
+
+\subsection*{Conclusions}
+\addcontentsline{toc}{subsection}{Conclusions}
+
+Our findings offer three primary insights. First, strategic hand selection differs substantially between high- and low-performing players, with top players showing greater use of Rock and less use of Paper. Second, early-round dominance strongly correlates with final standings—suggesting that getting ahead early is a key to success. Third, the lack of statistically significant strategic shifts among most of our groupmates (except Isabel) points to consistent but potentially predictable strategies that may not be optimal in dynamic, adaptive settings.
+
+While our analysis reveals strong patterns, it is limited in several ways. We did not control for the specific matchups players faced or whether they were reacting to an opponent’s known tendencies. Additionally, strategy shifts were only tested between two broad segments of the game (first two rounds vs. remaining rounds), and more granular time-series methods could reveal finer adaptation patterns. 
+
+Despite these limitations, the tables and visualizations provide compelling evidence that strategic flexibility, early-round success, and balanced hand usage contribute to superior performance in Rock-Paper-Scissors tournaments.
+
+% Optional GitHub reference (if allowed)
+% For full code, visualizations, and data: \href{https://github.com/YOUR_REPO_HERE}{GitHub Repository}
 
 \newpage
 
 % Part 4
 \section*{Part 4: Independent Exploration and Reflection}
+\addcontentsline{toc}{section}{Part 4: Independent Exploration and Reflection}
 
-\subsection*{Chosen Aspects for Analysis}
-\begin{enumerate}
-    \item % TODO: Insert custom metric 1
-    \item % TODO: Insert custom metric 2
-    \item % TODO: Insert custom metric 3
-\end{enumerate}
+\subsection*{Research Question and Motivation}
+\addcontentsline{toc}{subsection}{Research Question and Motivation}
 
-\subsection*{Findings and Conclusions}
-% TODO: Summarize insights drawn from custom analyses
+In this section, we explore the question: \textit{“What is the likelihood that a player will throw Rock, Paper, or Scissors based on what happened in the last round?”} Our interest stems from a behavioral economics perspective—specifically, whether players' choices can be predicted based on the outcome and decisions in the previous round. Understanding this could help characterize adaptive vs. non-adaptive strategies.
+
+\subsection*{Methodology and Model Derivation}
+\addcontentsline{toc}{subsection}{Methodology and Model Derivation}
+
+As a forword, our codebase is maintained through \href{https://github.com/adelatorre2/adelatorre2-competition-group-project-mt220}{GitHub} and Git version control tools \cite{noauthor_git_nodate}. We first reformatted the tournament dataset into a long panel structure where each row represents a single player's throw per match, paired with their opponent's corresponding throw. We generated lag variables for each row: the player's previous throw, the opponent's previous throw, and the previous round's result (Win, Loss, Draw).
+
+To model throw decision-making, we employed a multinomial logistic regression. Let $Y_i$ be the categorical variable representing player $i$'s current throw, taking one of three values: Rock ($R$), Paper ($P$), or Scissors ($S$). Using Rock as the baseline category, the model estimates the log-odds of throwing $P$ or $S$ relative to $R$:
+
+\begin{align*}
+\log\left(\frac{P(Y_i = P)}{P(Y_i = R)}\right) &= \beta_{0}^{(P)} + \boldsymbol{\beta}^{(P)} \cdot \mathbf{x}_i \\
+\log\left(\frac{P(Y_i = S)}{P(Y_i = R)}\right) &= \beta_{0}^{(S)} + \boldsymbol{\beta}^{(S)} \cdot \mathbf{x}_i
+\end{align*}
+
+where $\mathbf{x}_i$ includes:
+\begin{itemize}
+  \item \texttt{Previous\_Throw}$_i$: the player's own throw in the previous round
+  \item \texttt{Previous\_Opponent\_Throw}$_i$: their opponent's previous throw
+  \item \texttt{Previous\_Result}$_i$: outcome of the previous round (Win/Loss/Draw)
+\end{itemize}
+
+The model was fitted using the \texttt{multinom()} function from the \texttt{nnet} package. The log-likelihood is maximized over the dataset $\{(y_i, \mathbf{x}_i)\}_{i=1}^{n}$:
+
+\[
+\ell(\boldsymbol{\theta}) = \sum_{i=1}^{n} \sum_{k \in \{P,S\}} \mathbb{1}_{\{y_i = k\}} \log\left(\frac{e^{\beta_0^{(k)} + \boldsymbol{\beta}^{(k)} \cdot \mathbf{x}_i}}{1 + \sum_{j \in \{P,S\}} e^{\beta_0^{(j)} + \boldsymbol{\beta}^{(j)} \cdot \mathbf{x}_i}}\right)
+\]
+
+\subsection*{Key Findings}
+\addcontentsline{toc}{subsection}{Key Findings}
+
+After fitting the model, we used the estimated coefficients to compute predicted probabilities for each throw type conditional on the result of the previous round. These were visualized in Figure~\ref{fig:pred_probs}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{figures/predicted_throw_probabilities_by_result.png}
+  \caption{Predicted Probabilities of Throw Type by Previous Round Result}
+  \label{fig:pred_probs}
+\end{figure}
+
+The visualization reveals strategic asymmetries: after a \textbf{win}, players are most likely to throw \textbf{Rock}, suggesting potential stickiness or overconfidence in that strategy. After a \textbf{loss}, players are also more likely to switch to Rock, possibly due to an adjustment attempt. After a \textbf{draw}, the distribution is more balanced, with a slight tilt toward Paper. Coefficient tables (see Appendix~\ref{tab:model_coefficients_part4}) show that the previous opponent’s throw has a relatively large effect size in determining the player's next move. For example, a previous opponent throw of Rock increases the odds of the player choosing Paper significantly.
+
+\subsection*{Limitations}
+\addcontentsline{toc}{subsection}{Limitations}
+
+While our findings are suggestive, several caveats must be acknowledged. We do not control for the identity of the opponent or within-game dynamics beyond lag-1 behavior, which may introduce omitted variable bias. The multinomial model assumes the independence of irrelevant alternatives (IIA), which may not hold in behavioral settings where decision-making is context-dependent. Early rounds without lagged context were excluded, potentially biasing the sample toward longer games or more experienced players. Finally, the model does not account for strategy evolution over time, which suggests the need for more dynamic models like Markov Switching or Hidden Markov Models in future analyses.
+
+\subsection*{Future Directions}
+\addcontentsline{toc}{subsection}{Future Directions}
+
+Building on this work, future iterations of the project could explore heterogeneity in strategy by player using mixed-effects multinomial models. Further comparisons could be made between high-performing players and others to examine divergent strategies. Additionally, incorporating round number or game ID as fixed effects could help capture learning or fatigue effects. Modeling the opponent’s behavior as a separate, interactive process would also help account for joint strategic dynamics and feedback loops between players.
+
+\subsection*{Conclusion}
+\addcontentsline{toc}{subsection}{Conclusion}
+
+Using a multinomial logistic model, we found that prior outcomes and player/opponent throw history significantly influence the likelihood of selecting a throw in a Rock-Paper-Scissors tournament. The results point to a modest tendency to favor Rock following both wins and losses—suggesting cognitive biases or adaptation heuristics. This framework can be extended to richer models of decision-making and has potential applications in understanding sequential strategic behavior in low-stakes competitive games.
 
 \newpage
 \section*{Appendix: Part 1 Tables}
@@ -452,9 +578,170 @@ john      & 0.3119 & 2.319 & No \\
 \label{fig:strategy_shift_bar_appendix}
 \end{figure}
 
+\newpage
+\section*{Appendix: Part 3 Tables}
+\addcontentsline{toc}{section}{Appendix: Part 3 Tables}
+
+\begin{table}[H]
+\centering
+\caption{Total Individual Match Results by Player}
+\label{tab:total_match_results}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Player} & \textbf{Match Wins} & \textbf{Match Losses} & \textbf{Match Draws} \\
+\midrule
+matt      & 57 & 41 & 28 \\
+hayden    & 56 & 45 & 55 \\
+theo      & 55 & 45 & 28 \\
+neev      & 54 & 35 & 30 \\
+isabel    & 54 & 37 & 46 \\
+julia     & 54 & 39 & 31 \\
+james     & 53 & 42 & 51 \\
+gracilyn  & 53 & 46 & 30 \\
+arvind    & 51 & 42 & 36 \\
+brian     & 50 & 43 & 33 \\
+ryan      & 50 & 43 & 53 \\
+ellie     & 46 & 49 & 56 \\
+alejandro & 44 & 56 & 36 \\
+delaney   & 43 & 46 & 46 \\
+olivia    & 43 & 56 & 65 \\
+meredith  & 42 & 52 & 46 \\
+devin     & 42 & 54 & 37 \\
+john      & 41 & 43 & 45 \\
+leah      & 41 & 47 & 54 \\
+brooklyn  & 41 & 53 & 34 \\
+bruno     & 41 & 53 & 52 \\
+lindsey   & 38 & 47 & 51 \\
+molly     & 36 & 60 & 34 \\
+lilly     & 34 & 45 & 33 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\caption{Total Games Won and Lost by Player with Tournament Rank}
+\label{tab:total_game_results}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Player} & \textbf{Game Wins} & \textbf{Game Losses} & \textbf{Rank} \\
+\midrule
+neev      & 16 & 7 & 1 \\
+isabel    & 15 & 8 & 2 \\
+matt      & 14 & 9 & 3 \\
+james     & 14 & 9 & 3 \\
+hayden    & 14 & 9 & 3 \\
+theo      & 14 & 9 & 3 \\
+julia     & 13 & 10 & 4 \\
+brian     & 13 & 10 & 4 \\
+ryan      & 13 & 10 & 4 \\
+gracilyn  & 13 & 10 & 4 \\
+arvind    & 12 & 11 & 5 \\
+john      & 11 & 11 & 6 \\
+lilly     & 10 & 12 & 7 \\
+lindsey   & 10 & 12 & 7 \\
+leah      & 10 & 13 & 8 \\
+brooklyn  & 10 & 13 & 8 \\
+alejandro & 10 & 13 & 8 \\
+delaney   & 10 & 13 & 8 \\
+ellie     & 9  & 13 & 9 \\
+meredith  & 9  & 14 & 10 \\
+bruno     & 9  & 14 & 10 \\
+devin     & 9  & 14 & 10 \\
+olivia    & 9  & 14 & 10 \\
+molly     & 7  & 16 & 11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\tiny
+\caption{Groupmate Strategy Summary and Tournament Results}
+\label{tab:groupmate_summary}
+\begin{tabularx}{\textwidth}{lrrr>{\centering\arraybackslash}X rrr rrr >{\centering\arraybackslash}X}
+\toprule
+\textbf{Player} & \textbf{Game Wins} & \textbf{Game Losses} & \textbf{Rank} & \makecell{\textbf{Most}\\\textbf{Used}\\\textbf{Throw}} &
+\makecell{\textbf{First}\\\textbf{Win}} & \makecell{\textbf{First}\\\textbf{Loss}} & \makecell{\textbf{First}\\\textbf{Draw}} &
+\makecell{\textbf{Rest}\\\textbf{Win}} & \makecell{\textbf{Rest}\\\textbf{Loss}} & \makecell{\textbf{Rest}\\\textbf{Draw}} &
+\makecell{\textbf{Significant}\\\textbf{Shift?}} \\
+\midrule
+isabel     & 15 & 8  & 2  & S & 17 & 11 & 18 & 37 & 28 & 28 & Yes \\
+matt       & 14 & 9  & 3  & R & 27 & 12 &  7 & 30 & 29 & 21 & No  \\
+brian      & 13 & 10 & 4  & S & 15 & 15 & 16 & 36 & 28 & 17 & No  \\
+alejandro  & 10 & 13 & 8  & S & 13 & 17 & 16 & 32 & 39 & 20 & No  \\
+meredith   & 9  & 14 & 10 & P & 17 & 12 & 17 & 25 & 40 & 29 & No  \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Hand Usage Proportions: Top 5 vs Bottom 5 Players}
+\label{tab:top5_vs_bottom5_strategy}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Group} & \textbf{Proportion Rock} & \textbf{Proportion Paper} & \textbf{Proportion Scissors} \\
+\midrule
+Top 5     & 0.389 & 0.301 & 0.310 \\
+Bottom 5  & 0.268 & 0.401 & 0.331 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Match Outcomes in First Two Rounds: Top 5 vs Bottom 5 Players}
+\label{tab:first2_outcomes_t5b5}
+\begin{tabular}{lll}
+\toprule
+\textbf{Group} & \textbf{Outcome} & \textbf{Count} \\
+\midrule
+Top 5     & Win  & 99 \\
+Top 5     & Loss & 62 \\
+Top 5     & Draw & 69 \\
+Bottom 5  & Win  & 61 \\
+Bottom 5  & Loss & 100 \\
+Bottom 5  & Draw & 69 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section*{Appendix: Part 4 Tables}
+\addcontentsline{toc}{section}{Appendix: Part 4 Tables}
+
+\begin{table}[H]
+\centering
+
+\caption{Estimated Coefficients from Multinomial Logistic Regression Model (Baseline = Rock)}
+\label{tab:model_coefficients_part4}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Predictor} & \textbf{P vs R} & \textbf{S vs R} \\
+\midrule
+(Intercept) & -0.214992 & 0.093638 \\
+Previous\_ThrowR & 0.083627 & -0.085216 \\
+Previous\_ThrowS & 0.159360 & 0.081727 \\
+Previous\_Opponent\_ThrowR & 0.635958 & 0.425529 \\
+Previous\_Opponent\_ThrowS & 0.367453 & -0.032258 \\
+Previous\_ResultLoss & -0.133348 & 0.139584 \\
+Previous\_ResultWin & -0.172928 & 0.185359 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
 % bibliography
 \newpage
+\phantomsection
+\addcontentsline{toc}{section}{References}
 \bibliographystyle{apalike}
-\bibliography{references}
+\bibliography{references}   % APA-style citations (recommended for your type of paper)
+% \bibliographystyle{plain}  % Numeric references [1], [2], etc.
+% \bibliographystyle{ieeetr} % IEEE numeric format
 
 \end{document}

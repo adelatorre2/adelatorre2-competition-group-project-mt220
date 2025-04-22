@@ -102,3 +102,56 @@ if (!dir.exists("data")) {
 
 writexl::write_xlsx(long_df, "data/competition_last_long.xlsx")
 cat("Reformatted long dataset saved to data/competition_last_long.xlsx\n")
+
+# -----------------------------
+# Model Likelihood Player Throws R/P/S
+# -----------------------------
+
+# Add Lag Variables
+# Load long data
+df_lagged <- readxl::read_xlsx("data/competition_last_long.xlsx")
+
+# Add Previous Throw and Previous Result
+df_lagged <- df_lagged %>%
+  arrange(Player_ID, Game_ID, Match_ID) %>%
+  group_by(Player_ID) %>%
+  mutate(
+    Previous_Throw = lag(Throw),
+    Previous_Opponent_Throw = lag(Opponent_Throw),
+    Previous_Result = lag(case_when(
+      Throw == Opponent_Throw ~ "Draw",
+      (Throw == "R" & Opponent_Throw == "S") |
+      (Throw == "P" & Opponent_Throw == "R") |
+      (Throw == "S" & Opponent_Throw == "P") ~ "Win",
+      TRUE ~ "Loss"
+    ))
+  ) %>%
+  ungroup() %>%
+  filter(!is.na(Previous_Throw), !is.na(Previous_Result))
+
+# Make sure Throw is a factor (categorical)
+df_lagged$Throw <- as.factor(df_lagged$Throw)
+
+# Load the Modeling library
+library(nnet)  # for multinom()
+
+# Multinomial Logistic Regression Model
+model_rps <- multinom(
+  Throw ~ Previous_Throw + Previous_Opponent_Throw + Previous_Result,
+  data = df_lagged
+)
+
+# Interpretation of coefficients
+summary(model_rps)
+
+# Reorder reference category; R as Baseline
+df_lagged$Throw <- relevel(df_lagged$Throw, ref = "R")
+
+# Run the model again
+model_rps <- multinom(
+  Throw ~ Previous_Throw + Previous_Opponent_Throw + Previous_Result,
+  data = df_lagged
+)
+# Interpretation of coefficients w/ R as baseline
+summary(model_rps)
+

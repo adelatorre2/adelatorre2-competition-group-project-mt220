@@ -1,0 +1,22 @@
+Call:
+multinom(formula = Throw ~ Previous_Throw + Previous_Opponent_Throw + 
+    Previous_Result, data = df_lagged)
+
+Coefficients:
+  (Intercept) Previous_ThrowR Previous_ThrowS Previous_Opponent_ThrowR
+P -0.21499169      0.08362712      0.15935969                0.6359581
+S  0.09363757     -0.08521590      0.08172687                0.4255289
+  Previous_Opponent_ThrowS Previous_ResultLoss Previous_ResultWin
+P               0.36745349          -0.1333477         -0.1729282
+S              -0.03225788           0.1395839          0.1853586
+
+Std. Errors:
+  (Intercept) Previous_ThrowR Previous_ThrowS Previous_Opponent_ThrowR
+P   0.1272050       0.1179705       0.1103660                0.1215373
+S   0.1185606       0.1118047       0.1038345                0.1128531
+  Previous_Opponent_ThrowS Previous_ResultLoss Previous_ResultWin
+P                0.1079674           0.1135746          0.1141017
+S                0.1012640           0.1097010          0.1089118
+
+Residual Deviance: 6992.251 
+AIC: 7020.251 

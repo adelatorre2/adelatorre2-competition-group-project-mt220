@@ -1,3 +1,43 @@
+# part4_independent_analysis.R
+#
+## Description:
+#   Script for Part 4 of the MT220-01 Group Project. This script independently analyzes strategic behavior
+#   in a Rock-Paper-Scissors tournament using logistic regression and visualization. It includes:
+#     - Summary of match length distributions across games
+#     - Reformatting the data into long format with one row per player per match
+#     - Construction of lagged variables to track prior throws and outcomes
+#     - A multinomial logistic regression model predicting throw choice
+#     - Visualization of predicted probabilities conditioned on previous results
+#
+## Author(s): 
+#   Alejandro De La Torre
+#   Isabel Nold
+#   Brian Tobin
+#   Matt Schwartz
+#   Meredith Kendall
+#
+## Course:
+#   MT220-01 Introduction to Probability and Statistics (Spring 2025)
+#
+## Instructor:
+#   Pep Mateu
+#
+## Last Updated: April 22, 2025
+#
+## Dependencies:
+#   Requires the `dplyr`, `ggplot2`, `readxl`, `writexl`, `nnet`, and `tidyr` packages.
+#
+## Inputs:
+#   - data/competition_last.xlsx
+#
+## Outputs:
+#   - report/figures/match_length_distribution_exact.png
+#   - data/competition_last_long.xlsx
+#   - report/figures/predicted_throw_probabilities_by_result.png
+#
+## Usage:
+#   Source this script in RStudio or run sections interactively.
+
 # -----------------------------
 # Match Count Distribution Analysis
 # -----------------------------
@@ -142,7 +182,44 @@ model_rps <- multinom(
 )
 
 # Interpretation of coefficients
+
 summary(model_rps)
+
+# -----------------------------
+# Visualize Predicted Probabilities
+# -----------------------------
+
+# Calculate predicted probabilities
+df_probs <- df_lagged %>%
+  mutate(
+    Prob_R = predict(model_rps, newdata = df_lagged, type = "probs")[, "R"],
+    Prob_P = predict(model_rps, newdata = df_lagged, type = "probs")[, "P"],
+    Prob_S = predict(model_rps, newdata = df_lagged, type = "probs")[, "S"]
+  )
+
+# Reshape for plotting
+library(tidyr)
+df_probs_long <- df_probs %>%
+  pivot_longer(cols = starts_with("Prob_"), 
+               names_to = "Predicted_Throw", 
+               names_prefix = "Prob_", 
+               values_to = "Probability")
+
+# Plot average predicted probabilities by previous result
+if (!dir.exists("report/figures")) {
+  dir.create("report/figures", recursive = TRUE)
+}
+
+plot_path_probs <- "report/figures/predicted_throw_probabilities_by_result.png"
+ggplot(df_probs_long, aes(x = Previous_Result, y = Probability, fill = Predicted_Throw)) +
+  stat_summary(geom = "bar", fun = mean, position = "dodge") +
+  labs(title = "Predicted Probability of Throw by Previous Result",
+       x = "Previous Result",
+       y = "Predicted Probability") +
+  theme_minimal()
+
+ggsave(plot_path_probs, width = 8, height = 6)
+cat(paste("Predicted probabilities plot saved to:", plot_path_probs, "\n"))
 
 # Reorder reference category; R as Baseline
 df_lagged$Throw <- relevel(df_lagged$Throw, ref = "R")
@@ -154,4 +231,3 @@ model_rps <- multinom(
 )
 # Interpretation of coefficients w/ R as baseline
 summary(model_rps)
-
